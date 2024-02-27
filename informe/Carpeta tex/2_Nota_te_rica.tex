@@ -1,0 +1,224 @@
+\section{Nota teórica}
+En esta sección se muestran las descripciones generales de todos los componentes usados para construir el circuito solicitado.
+\subsection*{Microcontrolador ATTiny4313}
+El ATtiny2313A/4313 es un microcontrolador CMOS de 8 bits de bajo consumo basado en el AVR mejorado.
+Arquitectura RISC. Al ejecutar poderosas instrucciones en un solo ciclo de reloj, el ATtiny2313A/4313 logra rendimientos cercanos a 1 MIPS por MHz, lo que permite al sistema diseñador para optimizar el consumo de energía frente a la velocidad de procesamiento \cite{web}. Por lo que se requiere estudiar el diagrama de pines mostrado en la figura \ref{fig1}
+\begin{figure}[H]
+\centering
+\includegraphics[width=.8\linewidth]{Imagenes/1.png}
+ \caption{Pines del ATtiny4313. Tomado de \cite{web}.}
+ \label{fig1}
+\end{figure}
+\subsubsection*{Características generales}
+A continuación, se describen las características de cada pin para tener un mejor entendimiento de lo que se puede hacer con cada uno de ellos \cite{web}.
+\begin{enumerate}
+\item PA2-RESET/dW/PCINT10: RESET: entrada activa en bajo y activada por un 1 el \texttt{RSTDISBL} fuse. El pullup se activa y el controlador de salida y la entrada digital se desactivan cuando se usa el pin de RESET. \texttt{dW}: Cuando el fusible debugWIRE Enable (DWEN) está programado y los bits de bloqueo están sin programar, se activa el sistema debugWIRE dentro del dispositivo de destino. El pin RESET del puerto está configurado como un pin de I/O bidireccional de cable Y (drenaje abierto) con pull-up habilitado y se convierte en la puerta de enlace de comunicación entre el objetivo y el emulador. Sirve como I/O y tiene la opción de RESET. Solo que debe ponersele un 0 para que funcione como I/O. Tiene una resistencia interna de pull up. \texttt{PCINT10}: Fuente de interrupción de cambio de pin. El pin PA2 sirve como una fuente de interrupción externa.
+
+\item PD0-RXD/PCINT11. \texttt{RXD}: UART receptor de datos. \texttt{PCINT11}: El pin PD0 sirve como fuente de interrupción externa.
+
+\item PD1-TXD/PCINT12. \texttt{TXD}: UART transmisor de datos. \texttt{PCINT12}: El pin PD0 sirve como fuente de interrupción externa.
+
+\item PA1-XTAL2/PCINT9. \texttt{XTAL2}: chip de reloj oscilador. Se utiliza como pin de reloj para todas las fuentes de reloj de chip excepto oscilador RC interno calibrable y reloj externo. Cuando se utiliza como pin de reloj, el pin no se puede utilizar como pin de I/O. Cuando se utiliza un oscilador RC interno calibrable o un reloj externo como en las fuentes de reloj del chip, PA1 sirve como un pin de I/O normal. Este pin sirve como fuente de interrupción externa.
+\item PA0-\texttt{XTAL1/CLKI/PCINT8}. \texttt{XTAL1}: oscilador de reloj de chip. Se utiliza para todas las fuentes de reloj de chip excepto oscilador RC interno calibrable. Cuando se usa como pin de reloj, el pin no se puede usar como pin de I/O. Cuando se utiliza un oscilador RC interno calibrable como fuente de reloj de chip, PA0 sirve como pin de I/O. Este pin sirve como fuente de interrupción externa.
+\item PD2-INT0/XCK/CKOUT/PCINT13. \texttt{INTO}: este pin sirve como fuente de interrupción externa para el MCU. \texttt{XCK}: USART Reloj de transferencia utilizado sólo en el modo de transferencia síncrona.\texttt{CKOUT}: reloj sistema de salida.
+\item PD3-INT1/PCINT14. Ambas descripciones representan la misma equivalencia, ya que su objetivo final es que el pin PD3 sirve como fuente de interrupción externa.
+\item PD4-TO/PCINT15. \texttt{TO}: timer/counter0 la entrada del reloj contador externo se habilita configurando (uno) los bits CS02 y CS01 en el registro de control del timer/counter0 (TCCR0).\texttt{PCINT15}: este pin sirve como fuente de interrupción externa.
+\item PD5-OC0B/T1/PCINT16.\texttt{OC0B}:  Output Compare Match B. \texttt{T1}: La entrada del contador externo se habilita configurando (uno) los bits CS02
+y CS01 en el registro de control del timer1/counter1 (TCCR1) \texttt{PCINT16}: este pin sirve como fuente de interrupción externa.
+\item GND: nodo de tierra.
+\item PD6-ICPI/PCINT17.\texttt{ICPI}: entrada de captura. Este pin puede actuar como un pin de captura de entrada para el timer/counter1. \texttt{PCINT17}: este pin sirve como fuente de interrupción externa.
+\item PB0-AIN0/PCINT0. \texttt{AIN0}: es un comparador análogo de entrada positiva. Configure el pin del puerto como entrada con el pull-up interno apagado para evitar que la función del puerto digital interfiera con la función del comparador analógico \texttt{PCINT0}: este pin sirve como fuente de interrupción externa.
+\item PB1-AIN1/PCINT1. \texttt{AIN1}: es un comparador análogo de entrada negativa. \texttt{PCINT1}: este pin sirve como fuente de interrupción externa.
+\item PB2-OC0A/PCINT2.Output Compare Match A output. \texttt{OC0A}: el pin PB2 puede servir como salida externa para comparación de salida de timer/counter0 A. El pin debe configurarse como salida (configurando DDB2 igual 1) y cumplir esta función. \texttt{PCINT2}: este pin sirve como fuente de interrupción externa.
+\item PB3-OC1A/PCINT3. \texttt{OC1A}:Output Compare Match A output. El pin PB3 puede servir como salida externa para comparación de salida de timer/counter1 A. El pin debe configurarse como salida (configurando DDB3 igual 1) y cumplir esta función. \texttt{PCINT3}: este pin sirve como fuente de interrupción externa.
+\item PB4-OC1B/PCINT4. \texttt{OC1B}: Output Compare Match B output. Se puede configurar DDB4 igual a 1 para activar esta función. \texttt{PCINT4}: este pin sirve como fuente de interrupción externa.
+\item PB5-DI/SDA/PCINT5.\texttt{DI}: Entrada de datos de interfaz serie universal en modo de tres cables. El modo de tres cables no anula las funciones normales del puerto, por lo que el pin debe configurarse como entrada.\texttt{SDA}: modo serial interfaz de datos de dos cables.\texttt{PCINT5}: este pin sirve como fuente de interrupción externa.
+\item PB6-DO/PCINT6. \texttt{DO}: Salida de datos de interfaz serie universal en modo de tres cables. Modo de tres cables de salida de datos anula el valor de PORTB6 y se dirige al puerto cuando el bit de dirección de datos DDB6 es uno. Sin embargo, el bit PORTB6 aún controla el pull-up, lo que permite el pull-up si se ingresa la dirección y PORTB6 en 1. \texttt{PCINT6}: este pin sirve como fuente de interrupción externa.
+\item PB7-USCK/SCL/PCINT7. \texttt{USCK}: interfaz serial de reloj modo de 3 cables. \texttt{SCL}: reloj serial para USI modo de dos cables. \texttt{PCINT7}: este pin sirve como fuente de interrupción externa.
+\item VCC: fuente de alimentación.
+\end{enumerate}
+En la figura \ref{fig2} se muestra el diagrama de bloques de este microcontrolador.
+\begin{figure}[H]
+\centering
+\includegraphics[width=.7\linewidth]{Imagenes/2.png}
+ \caption{Diagrama de bloques del ATtiny4313. Tomado de \cite{web}.}
+ \label{fig2}
+\end{figure}
+Otro detalle importante es considerar los valores máximos con los que se puede trabajar el ATtiny4313.
+\begin{figure}[H]
+\centering
+\includegraphics[width=.5\linewidth]{Imagenes/3.png}
+ \caption{Diagrama de bloques del ATtiny4313. Tomado de \cite{web}.}
+ \label{fig3}
+\end{figure}
+
+\subsection*{Periféricos}
+La descripción de los registros e instrucciones utilizados son los siguientes:
+\begin{itemize}
+    \item \textbf{DDRxn}: Registro de dirección de datos. Encargado de determinar si los pines van a trabajar como entradas (0) o como salidas (1). El registro de dirección de datos se observa en la siguiente imagen:
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\linewidth]{Imagenes/DirectionD.png}
+        \caption{Registro de dirección de datos. Tomado de \cite{web}.}
+        \label{fig4}
+    \end{figure}
+    
+	\item \textbf{PORTxn}: Registro de datos. Permite establecer los pines con un estado inicial, ya sea en alto o en bajo, esto para el uso de señales digitales.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\linewidth]{Imagenes/DataD.png}
+        \caption{Registro de datos. Tomado de \cite{web}.}
+        \label{fig5}
+    \end{figure}
+
+    \item \textbf{GIMSK}: (General Interrupt Mask Register). Registro encargado de habilitar y deshabilitar interrupciones. Cuando se desea leer interrupciones es necesario configurar este registro.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\linewidth]{Imagenes/GIMSK.png}
+        \caption{Configuración del registro GIMSK. Tomado de \cite{web}.}
+        \label{fig6}
+    \end{figure}
+
+    \item \textbf{PCMSKn}: Usado para habilitar o deshabilitar ciertos pines para que trabajen como pines de interrupción.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\linewidth]{Imagenes/PCMSK.png}
+        \caption{Registro habilitación de interrupciones. Tomado de \cite{web}.}
+        \label{fig7}
+    \end{figure}
+
+    \item \textbf{TCCR0x}: Este es el registro de control para el contador 0 (x puede ser A o B), además, permite establecer el prescaler y modos de comparación. Hay dos registros de control para el contador 0, ya sea el A o el B.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\linewidth]{Imagenes/TCCR0A.png}
+        \caption{Registro de control de Timer/Counter. Tomado de \cite{web}.}
+        \label{fig8}
+    \end{figure}
+
+    \item \textbf{OCR0A}: Registro que guarda el valor de comparación. Cuando el valor de OCR0A es igual al de TCNT0 la señal del comparador se pone en alto.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\linewidth]{Imagenes/OCR0A.png}
+        \caption{Registro de comparación de salida A. Tomado de \cite{web}.}
+        \label{fig9}
+    \end{figure}
+    
+\end{itemize}
+
+\subsection*{Componentes electrónicos complementarios}
+\subsubsection*{Decodificador BCD y display de 7 segmentos}
+BCD (Decimal Codificado en Binario) es un código que representa valores decimales en formato binario, para ello forma grupos de 4 bits para representar cada valor del 0 al 9. El 9 es el valor máximo que se puede representar en un dígito decimal \cite{web2}. Lo anterior justifica el hecho de usar dos display de 7 segmentos, al tener 2 de estos componentes es necesario usar dos convertidores ya que se necesita optimizar la cantidad de pines del MCU \texttt{ATtiny4313}.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.5\linewidth]{Imagenes/4.png}
+        \caption{Conexión de los displays con el ATtiny4313. Tomado de \cite{web}.}
+        \label{fig10}
+    \end{figure}
+\subsubsection*{Switches}
+Los botones son elementos importantes para poder activar las interrupciones, no obstante, hay que tener en cuenta el efecto rebote para evitar las lecturas falsas en el circuito.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.3\linewidth]{Imagenes/switch.jpeg}
+        \caption{Botones. Tomado de \cite{web3}.}
+        \label{boton}
+    \end{figure}
+
+\subsubsection*{LEDs}
+Los Leds se encargarán de mostrar los estados de la lavadora, y para estos hay que ponerles una resistencia adecuada para no afectar este tipo de señales. Por este motivo, se procuro operar bajo tensiones eléctricas menores a \SI{2.4}{\volt}.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.3\linewidth]{Imagenes/LED.jpg}
+        \caption{LEDs. Tomado de \cite{web3}.}
+        \label{LED}
+    \end{figure}
+    
+\subsubsection*{demultiplexor}
+Es un decodificador/demultiplexor dual 1 de 4 de alta velocidad. El dispositivo tiene dos decodificadores independientes, cada uno de los cuales acepta dos entradas y proporcionando cuatro salidas LOW activas mutuamente excluyentes \cite{web3}. Se adaptó este componente para configurar la salida de los LEDs y así poderlos conectar al MCU.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.3\linewidth]{Imagenes/demux.jpg}
+        \caption{Demultiplexor. Tomado de \cite{web3}.}
+        \label{demux}
+    \end{figure}
+    
+\subsection*{Lista de componentes}
+En la tabla \ref{table_2} resume el equipo electrónico a usar para este laboratorio.\par \textbf{Nota:} Se encontró un kit donde vienen todas las magnitudes buscadas, \SI{100}{\ohm}, \SI{100}{\kilo\ohm}, \SI{10}{\kilo\ohm}
+\begin{table}[H]
+\caption{Lista de equipos}
+\label{table_2}
+\begin{center}
+\begin{tabular}{r|cc}
+\hline
+\textbf{Componente}&\textbf{Cantidad}&\textbf{Precio}\\
+ \hline
+ATtiny4313 &1  & 1.83\$ \\ \hline 
+LED 7 segmentos& 2 &1.30\$ \\ \hline 
+Resistencias & 1 &9.95\$ \\ \hline
+
+Capacitores \SI{100}{\nano\farad}& 4 & 0.76\$ \\ \hline
+Switches & 4 & 2.6\$ \\ \hline
+LEDs& 7 & 3.85\$ \\ \hline
+Demultiplexor& 1 & 2.35\$ \\ \hline
+Convertidores Bcd-7S& 2 &2.60\$ \\ \hline
+ \textbf{Total}& & 25.24\$ \\
+ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection*{Diseño del circuito}
+
+Al tratarse de una lavadora compuesta de máquina de estados, el diseño del circuito se fue realizando por etapas. No obstante, la lógica de la electrónica fue posible armarla con los conocimientos adquiridos del primer laboratorio. El esquemático base para la lavadora automática es el siguiente:
+ \input{sch1.tex}
+Del esquemático \ref{FigWW}, es claro notar que el circuito general se compone de varias etapas. Así, es importante saber el uso de las interrupciones para realizar una tarea tan simple como encender o apagar un LED, por ese motivo, hay que consultar la hoja del fabricante del MCU para tener más detalles de los pines para programar la interrupción, además habilitarlos para que sirvan como salida o entrada dependiendo de la conexión hecha previamente. El ejemplo de la figura \ref{fig11},
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.7\linewidth]{Imagenes/5.1.png}
+        \caption{Encendido de un LED.}
+        \label{fig11}
+    \end{figure}
+se muestra que el pin B0, es una entrada para este caso, y esto indica que ocupará habilitar la resistencia de pull-up con el enmáscarado \texttt{GIMSK}. Por su parte, el pin B4 se trata de una salida, entonces basta con hacer uso de \texttt{DDRB=0b00010000}, para que el programa entienda que es una salida. De esa manera, presionando el botón, es posible encender el led adecuadamente.\par
+La anterior fue de gran importancia para entender el comportamiento de las interrupciones y todo lo necesario para hacer que éstas trabajen adecuadamente. Por lo que una de las primeras etapas realizadas para este laboratorio fue encender LEDs por medio de botones haciendo uso de interrupciones. No sin antes mencionar que al trabajar con botones es importante diseñarlos de tal manera que el efecto rebote cause falsas lecturas en el circuito, por tanto, se diseñó un factor de $\tau$ igual para todos los botones.
+\begin{equation}
+\tau = RC \Rightarrow \tau = \SI{100}{\kilo\ohm} \cdot \SI{100}{\nano\farad} = 0.01
+\end{equation}
+Lo que es equivalente a frecuencia de \SI{100}{\Hz}.
+
+\begin{figure}[H]
+   \begin{minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[width=.7\linewidth]{Imagenes/6.png}
+     \caption{Carga media}\label{F12}
+   \end{minipage}\hfill
+   \begin{minipage}{0.48\textwidth}
+     \centering
+     \includegraphics[width=.7\linewidth]{Imagenes/7.png}
+     \caption{Indicador de carga media }\label{F13}
+   \end{minipage}
+\end{figure}
+Primero se presiona el botón, donde es claro notar el flujo de corriente esperado que por medio de una interrupción le llegará al LED de carga media, y de manera inmediata es posible ver que el LED se enciende tal como se esperaba. Además, note que le está llegando una alimentación de \SI{5}{\volt}, lo que es una tensión eléctrica adecuada para que este componente no se dañe. Esta prueba se realizó con todos los demás LEDs.\par
+Ahora, la segunda etapa consistió en mostrar en los displays de segmentos de la figura \ref{fig10} con los tiempos totales de cada carga que se le vaya asignar a la lavadora. Esto consiste en programar una cuenta regresiva haciendo uso de los pines B, los cuales están configurados como salida y así mostrar el respectivo número definido previamente en el código. Entonces, al presionar cualquiera de los 3 botones los display mostrarán el total del tiempo para cada carga tal como se muestra a continuación:
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=.7\linewidth]{Imagenes/8.png}
+        \caption{Encendido de un LED con cuenta regresiva.}
+        \label{fig14}
+    \end{figure}
+Lo primero a resaltar es que la corriente eléctrica que le está llegando a los displays es la adecuada, ya que no supera los \SI{0.02}{\A}, así como al LED. Además, note que a los displays hay conectada una resistencia de \SI{90}{\ohm} para brindar protección a cada LED, esto justifica el hecho de no ver un parpadeo en cada segmento. Luego, el uso de las interrupciones para este caso (y los demás) presentan el resultado esperado a la hora de presionar el botón con carga alta.\par
+Ahora, la siguiente prueba que se realizó fue la sincronización de los tiempos con los LEDs correspondientes para las 4 etapas de la lavadora. Esto por medio de una máquina de estados para realizar cada transición tal como se muestra en la figura \ref{fig15}.
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=.7\linewidth]{Imagenes/9.png}
+        \caption{Transición de estados de la lavadora.}
+        \label{fig15}
+    \end{figure}
+Hecho lo anterior, es posible ya mostrar el diseño completo del circuito que simula el comportamiento de una lavadora.
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=.7\linewidth]{Imagenes/10.png}
+        \caption{Diseño del circuito completo.}
+        \label{fig16}
+    \end{figure}
+La programación de las funciones que hicieron este comportamiento posible se explicarán en la sección de resultados por medio de diagramas e imágenes. Por razones de tiempo, la última etapa del botón de pausa no se realizó, porque ya no hay más pines disponibles y se tendría que colocar un demultiplexor en alguna parte del circuito para lograr esto, eso implicaría muchos cambios en el código ya realizado.
+
+\newpage
